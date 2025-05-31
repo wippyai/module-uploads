@@ -1,2 +1,112 @@
-version: "1.0.0"
-namespace: wippy
+version: "1.0"
+namespace: wippy.uploads
+
+entries:
+  # wippy.uploads:content_repo
+  - name: content_repo
+    kind: library.lua
+    meta:
+      comment: Repository for managing upload content records
+    source: file://content_repo.lua
+    modules:
+      - sql
+      - json
+      - time
+      - uuid
+    
+  # wippy.uploads:pipeline
+  - name: pipeline
+    kind: process.lua
+    meta:
+      comment: Process that manages upload processing pipeline
+      depends_on:
+        - upload_repo
+        - upload_lib
+        - upload_type
+        - content_repo
+        - pipeline_lib
+    source: file://pipeline.lua
+    modules:
+      - time
+      - logger
+    imports:
+      content_repo: wippy.uploads:content_repo
+      pipeline_lib: wippy.uploads:pipeline_lib
+      upload_lib: wippy.uploads:upload_lib
+      upload_repo: wippy.uploads:upload_repo
+      upload_type: wippy.uploads:upload_type
+    method: run
+    
+  # wippy.uploads:pipeline.service
+  - name: pipeline.service
+    kind: process.service
+    meta:
+      comment: Upload Processing Pipeline Service
+    host: app:processes
+    lifecycle:
+      depends_on:
+        - app:processes
+      auto_start: true
+      security:
+        groups:
+          - wippy.security:process
+    process: pipeline
+    
+  # wippy.uploads:pipeline_lib
+  - name: pipeline_lib
+    kind: library.lua
+    meta:
+      comment: Library for upload processing pipeline functions
+      depends_on:
+        - upload_repo
+        - upload_type
+    source: file://pipeline_lib.lua
+    modules:
+      - time
+      - funcs
+      - security
+    imports:
+      upload_repo: wippy.uploads:upload_repo
+      upload_type: wippy.uploads:upload_type
+    
+  # wippy.uploads:upload_lib
+  - name: upload_lib
+    kind: library.lua
+    meta:
+      comment: Library for handling file uploads to various storage backends
+      depends_on:
+        - upload_repo
+        - upload_type
+    source: file://upload_lib.lua
+    modules:
+      - fs
+      - uuid
+      - json
+      - cloudstorage
+      - env
+      - time
+    imports:
+      upload_repo: wippy.uploads:upload_repo
+      upload_type: wippy.uploads:upload_type
+    
+  # wippy.uploads:upload_repo
+  - name: upload_repo
+    kind: library.lua
+    meta:
+      comment: Repository for managing file uploads
+    source: file://upload_repo.lua
+    modules:
+      - sql
+      - json
+      - time
+    
+  # wippy.uploads:upload_type
+  - name: upload_type
+    kind: library.lua
+    meta:
+      comment: Library for managing upload types
+    source: file://upload_type.lua
+    modules:
+      - registry
+      - time
+    

@@ -11,11 +11,11 @@
 
 [![Latest Release](https://img.shields.io/github/v/release/wippyai/module-uploads?style=flat-square)][releases-page]
 [![License](https://img.shields.io/github/license/wippyai/module-uploads?style=flat-square)](LICENSE)
-[![Documentation](https://img.shields.io/badge/Wippy-Documentation-brightgreen.svg?style=flat-square)][wippy-documentation]]
+[![Documentation](https://img.shields.io/badge/Wippy-Documentation-brightgreen.svg?style=flat-square)][wippy-documentation]
 
 </div>
 
-{description}
+This module provides a simple way to upload files to the Wippy platform.
 
 [wippy-documentation]: https://docs.wippy.ai
 [releases-page]: https://github.com/wippyai/module-uploads/releases
